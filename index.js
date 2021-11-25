@@ -7,4 +7,9 @@ const mysql = require('mysql2');
 
 app.use( express.static('public') );
 
+app.get('/', (req, res) => {
+	res.send('hello');
+});
+
+
 app.listen(process.env.SERVER_PORT);
