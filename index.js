@@ -7,6 +7,9 @@ const mysql = require('mysql2');
 
 app.use( express.static('public') );
 
+const apiRoute = require('./routers/api');
+app.use('/api', apiRoute);
+
 app.get('/', (req, res) => {
 	res.send('hello');
 });
