@@ -14,5 +14,4 @@ app.get('/', (req, res) => {
 	res.send('hello');
 });
 
-
 app.listen(process.env.SERVER_PORT);
