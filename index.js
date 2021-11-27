@@ -28,7 +28,17 @@ app.use(session({
 	saveUninitialized: true
 }));
 app.use( (req, res, next) => {
-	res.locals.user_id = req.session.user_id;
+	if ( req.session.logged_in ) {
+		res.locals.logged_in = req.session.logged_in;
+		res.locals.user_id = req.session.user_id;
+		res.locals.first = req.session.first;
+		res.locals.last = req.session.last;
+		res.locals.email = req.session.email;
+		res.locals.parent = req.session.parent;
+		res.locals.admin = req.session.admin;
+	} else {
+		res.locals.logged_in = false;
+	}
 
 	next();
 });
@@ -37,10 +47,28 @@ const apiRoute = require('./routers/api');
 app.use('/api', apiRoute);
 
 app.get('/', (req, res) => {
-	res.render('login');
+	if ( res.locals.logged_in ) {
+		res.render('index');
+	} else {
+		res.render('login');
+	}
+	
 });
 
-// TODO(erh) this is broken.
+app.get('/logout', (req, res) => {
+	if ( req.session ) {
+		req.session.destroy(err => {
+			if ( err ) {
+				res.status(400).send('Unable to log out');
+			} else {
+				res.redirect('/');
+			}
+		});
+	} else {
+		res.redirect('/');
+	}
+});
+
 app.post('/login', async (req, res) => {
 	let login_email = req.body.email;
 	let login_pass  = req.body.password;
@@ -51,7 +79,7 @@ app.post('/login', async (req, res) => {
 			console.log(err);
 			res.status(500).send('error');
 		}
-		console.log(results);
+		
 		if ( results.length > 0 ) {
 			try {
 				if ( await bcrypt.compare(login_pass, results[0].password) ) {
@@ -62,6 +90,8 @@ app.post('/login', async (req, res) => {
 					req.session.email   = results[0].email;
 					req.session.parent  = results[0].parent;
 					req.session.admin   = results[0].admin;
+
+					res.redirect('/');
 				} else {
 					res.send('Incorrect username or password.');
 				}
