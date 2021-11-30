@@ -24,3 +24,33 @@ body {
 	font-size: 1.5rem;
 	border-radius: 5px;
 }
+
+
+/* index specific designs */
+.chore-container {
+	display: flex;
+	width: 100vw;
+	justify-content: space-evenly;
+}
+
+.day {
+	width: calc(100vw / 8);
+	background-color: #eee;
+	border: 1px solid #000;
+	border-radius: 5px;
+}
+
+.day h4 {
+	margin: 0;
+	border-bottom: 1px solid #ccc;
+	padding: 2px 5px;
+}
+
+.day.current {
+	background-color: #ff9;
+}
+
+.day div.chores {
+	padding: 2px;
+}
+

@@ -30,6 +30,8 @@ app.use(session({
 app.use( (req, res, next) => {
 	if ( req.session.logged_in ) {
 		res.locals.logged_in = req.session.logged_in;
+		res.locals.family_id = req.session.family_id;
+		res.locals.family_name = req.session.family_name;
 		res.locals.user_id = req.session.user_id;
 		res.locals.first = req.session.first;
 		res.locals.last = req.session.last;
@@ -73,7 +75,14 @@ app.post('/login', async (req, res) => {
 	let login_email = req.body.email;
 	let login_pass  = req.body.password;
 
-	let query = 'SELECT id, family_id, email, first, last, password, parent, admin FROM users WHERE email = ?';
+	let query = `
+		SELECT 
+			u.id, u.family_id, f.name AS family_name, u.email, 
+			u.first, u.last, u.password, u.parent, u.admin 
+		FROM users AS u
+		LEFT JOIN families AS f ON u.family_id = f.id
+		WHERE u.email = ?
+	`;
 	connection.query(query, login_email, async (err, results) => {
 		if ( err ) {
 			console.log(err);
@@ -83,13 +92,15 @@ app.post('/login', async (req, res) => {
 		if ( results.length > 0 ) {
 			try {
 				if ( await bcrypt.compare(login_pass, results[0].password) ) {
-					req.session.logged_in = true;
-					req.session.user_id = results[0].id;
-					req.session.first   = results[0].first;
-					req.session.last    = results[0].last;
-					req.session.email   = results[0].email;
-					req.session.parent  = results[0].parent;
-					req.session.admin   = results[0].admin;
+					req.session.logged_in   = true;
+					req.session.user_id     = results[0].id;
+					req.session.family_id   = results[0].family_id;
+					req.session.family_name = results[0].family_name;
+					req.session.first       = results[0].first;
+					req.session.last        = results[0].last;
+					req.session.email       = results[0].email;
+					req.session.parent      = results[0].parent;
+					req.session.admin       = results[0].admin;
 
 					res.redirect('/');
 				} else {

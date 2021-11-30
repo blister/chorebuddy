@@ -9,21 +9,25 @@
 	<link rel="stylesheet" href="/css/chorebuddy.css">
 </head>
 <body>
-	<a href="/logout">Logout</a>
+	<h1><%= family_name %> - ChoreBuddy</h1>
+	<a style="float:right; position: absolute; top: 10px; right: 10px;" href="/logout">Logout</a>
+	<!-- 
 	<ul>
 		<li><%= user_id %></li>
 		<li><%= first %> <%= last %></li>
 		<li><%= parent %> - <%= admin %></li>
 	</ul>
+	-->
+	
+	<div class="chore-container">
 
-	<div class="container">
-
-		<div class="available-chores">
-
-			<ul>
-			</ul>
-
-		</div>
+		<div class="day" id="Sun"></div>	
+		<div class="day" id="Mon"></div>	
+		<div class="day" id="Tue"></div>	
+		<div class="day" id="Wed"></div>	
+		<div class="day" id="Thu"></div>	
+		<div class="day" id="Fri"></div>	
+		<div class="day" id="Sat"></div>	
 
 	</div>
 
